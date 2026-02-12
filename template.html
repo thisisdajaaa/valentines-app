@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quick Quiz! 💝</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            padding: 40px 30px;
+            border-radius: 25px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .quiz-header {
+            margin-bottom: 30px;
+        }
+
+        .quiz-header h1 {
+            font-size: 2em;
+            color: #f5576c;
+            margin-bottom: 10px;
+        }
+
+        .quiz-header p {
+            font-size: 1.1em;
+            color: #666;
+        }
+
+        .question-container {
+            margin-bottom: 30px;
+        }
+
+        .question {
+            font-size: 1.3em;
+            color: #333;
+            margin-bottom: 25px;
+            font-weight: bold;
+            line-height: 1.5;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .option {
+            padding: 20px;
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 50%, #ffecd2 100%);
+            border: 3px solid transparent;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #333;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            user-select: none;
+        }
+
+        .option:active {
+            transform: scale(0.95);
+        }
+
+        .option.selected {
+            background: linear-gradient(135deg, #f5576c, #ff8fab);
+            color: white;
+            border-color: #f5576c;
+            box-shadow: 0 8px 25px rgba(245, 87, 108, 0.4);
+        }
+
+        .option.wrong {
+            background: linear-gradient(135deg, #e0e0e0, #cfcfcf);
+            color: #999;
+            animation: shake 0.5s;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .next-btn {
+            padding: 15px 40px;
+            background: linear-gradient(135deg, #f5576c, #ff8fab);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.2em;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .next-btn.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .next-btn:active {
+            transform: scale(0.95);
+        }
+
+        .progress {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+        .progress-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #e0e0e0;
+            transition: all 0.3s ease;
+        }
+
+        .progress-dot.active {
+            background: #f5576c;
+            transform: scale(1.3);
+        }
+
+        .final-message {
+            display: none;
+            animation: bounceIn 0.8s ease-out;
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .final-message .emoji {
+            font-size: 5em;
+            margin-bottom: 20px;
+            animation: spin 2s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            0%, 100% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(1.2); }
+        }
+
+        .final-message h2 {
+            font-size: 2.5em;
+            color: #f5576c;
+            margin-bottom: 20px;
+        }
+
+        .final-message p {
+            font-size: 1.2em;
+            color: #555;
+            line-height: 1.8;
+        }
+
+        .hide {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="quizSection">
+            <div class="quiz-header">
+                <h1>💝 Quick Quiz! 💝</h1>
+                <p>Let's see how well you know me...</p>
+            </div>
+
+            <div class="progress" id="progress">
+                <div class="progress-dot active"></div>
+                <div class="progress-dot"></div>
+                <div class="progress-dot"></div>
+                <div class="progress-dot"></div>
+                <div class="progress-dot"></div>
+            </div>
+
+            <div class="question-container">
+                <div class="question" id="question"></div>
+                <div class="options" id="options"></div>
+            </div>
+
+            <button class="next-btn" id="nextBtn">Next Question →</button>
+        </div>
+
+        <div id="finalMessage" class="final-message">
+            <div class="emoji">🎉</div>
+            <h2>Perfect Score! 🥳</h2>
+            <p>
+                You know me so well! 💕<br><br>
+                And now I have one more question...<br><br>
+                <span style="font-size: 1.5em; color: #f5576c; font-weight: bold;">
+                Will You Be My Valentine?
+                </span>
+                <br><br>
+                (The answer better be yes! 😊💖)
+            </p>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                question: "What's my favorite thing about you?",
+                options: ["Your smile 😊", "Your laugh 😄", "Your eyes 👀", "Everything! 💕"],
+                correct: 3
+            },
+            {
+                question: "What do I think about when I see you?",
+                options: ["How lucky I am 🍀", "What to eat 🍕", "Random thoughts 🤔", "Work stuff 💼"],
+                correct: 0
+            },
+            {
+                question: "How much do I care about you?",
+                options: ["A little bit 🤏", "Kind of 😐", "A lot! 💖", "More than words can say! 💝"],
+                correct: 3
+            },
+            {
+                question: "What would make my Valentine's Day perfect?",
+                options: ["Fancy dinner 🍽️", "Expensive gifts 🎁", "Being with you 💑", "Going viral 📱"],
+                correct: 2
+            },
+            {
+                question: "Will You Be My Valentine? 💝",
+                options: ["Yes! 💕", "Absolutely! 💖", "I'd love to! 💗", "Of course! 💘"],
+                correct: 0,
+                isLastQuestion: true
+            }
+        ];
+
+        let currentQuestion = 0;
+        let selectedAnswer = null;
+
+        const questionEl = document.getElementById('question');
+        const optionsEl = document.getElementById('options');
+        const nextBtn = document.getElementById('nextBtn');
+        const progressDots = document.querySelectorAll('.progress-dot');
+        const quizSection = document.getElementById('quizSection');
+        const finalMessage = document.getElementById('finalMessage');
+
+        function loadQuestion() {
+            const q = questions[currentQuestion];
+            questionEl.textContent = q.question;
+            optionsEl.innerHTML = '';
+            selectedAnswer = null;
+            nextBtn.classList.remove('active');
+
+            q.options.forEach((option, index) => {
+                const optionDiv = document.createElement('div');
+                optionDiv.className = 'option';
+                optionDiv.textContent = option;
+                optionDiv.onclick = () => selectOption(index, optionDiv);
+                optionsEl.appendChild(optionDiv);
+            });
+        }
+
+        function selectOption(index, element) {
+            // Remove previous selections
+            document.querySelectorAll('.option').forEach(opt => {
+                opt.classList.remove('selected', 'wrong');
+            });
+
+            const q = questions[currentQuestion];
+            
+            // For the last question, all answers are correct!
+            if (q.isLastQuestion) {
+                element.classList.add('selected');
+                selectedAnswer = index;
+                nextBtn.classList.add('active');
+                createHearts();
+            } else if (index === q.correct) {
+                element.classList.add('selected');
+                selectedAnswer = index;
+                nextBtn.classList.add('active');
+                createHearts();
+            } else {
+                element.classList.add('wrong');
+                setTimeout(() => {
+                    element.classList.remove('wrong');
+                }, 500);
+            }
+        }
+
+        function createHearts() {
+            for (let i = 0; i < 5; i++) {
+                setTimeout(() => {
+                    const heart = document.createElement('div');
+                    heart.textContent = '💖';
+                    heart.style.position = 'fixed';
+                    heart.style.left = Math.random() * window.innerWidth + 'px';
+                    heart.style.top = window.innerHeight + 'px';
+                    heart.style.fontSize = '30px';
+                    heart.style.pointerEvents = 'none';
+                    heart.style.zIndex = '1000';
+                    heart.style.animation = 'floatUp 2s ease-out forwards';
+                    document.body.appendChild(heart);
+                    
+                    setTimeout(() => heart.remove(), 2000);
+                }, i * 100);
+            }
+        }
+
+        nextBtn.addEventListener('click', () => {
+            if (selectedAnswer !== null) {
+                currentQuestion++;
+                
+                if (currentQuestion < questions.length) {
+                    progressDots[currentQuestion].classList.add('active');
+                    loadQuestion();
+                } else {
+                    // Quiz complete!
+                    quizSection.style.display = 'none';
+                    finalMessage.style.display = 'block';
+                    celebrate();
+                }
+            }
+        });
+
+        function celebrate() {
+            for (let i = 0; i < 30; i++) {
+                setTimeout(() => {
+                    const emoji = ['💕', '💖', '💗', '💝', '❤️'][Math.floor(Math.random() * 5)];
+                    const heart = document.createElement('div');
+                    heart.textContent = emoji;
+                    heart.style.position = 'fixed';
+                    heart.style.left = Math.random() * window.innerWidth + 'px';
+                    heart.style.top = window.innerHeight + 'px';
+                    heart.style.fontSize = (Math.random() * 30 + 20) + 'px';
+                    heart.style.pointerEvents = 'none';
+                    heart.style.zIndex = '1000';
+                    heart.style.animation = 'floatUp 3s ease-out forwards';
+                    document.body.appendChild(heart);
+                    
+                    setTimeout(() => heart.remove(), 3000);
+                }, i * 100);
+            }
+        }
+
+        // Add animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes floatUp {
+                0% {
+                    transform: translateY(0) rotate(0deg);
+                    opacity: 1;
+                }
+                100% {
+                    transform: translateY(-100vh) rotate(360deg);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Initialize
+        loadQuestion();
+    </script>
+</body>
+</html>
