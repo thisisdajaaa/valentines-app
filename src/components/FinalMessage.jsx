@@ -6,11 +6,8 @@ export function FinalMessage() {
       <p>
         You know me so well! 💕<br /><br />
         And you said yes—I’m so happy! 💖<br /><br />
-        <span style={{ fontSize: '1.5em', color: '#f5576c', fontWeight: 'bold' }}>
-          I love you, boo! 💝
-        </span>
-        <br /><br />
-        (Best quiz ever. 😊)
+        <span className="highlight">I love you, boo! 💝</span>
+        <span className="sub">(Best quiz ever. 😊)</span>
       </p>
     </div>
   );

@@ -76,13 +76,16 @@ function App() {
           {questions.map((_, i) => (
             <div
               key={i}
-              className={`progress-dot ${i <= currentQuestion ? 'active' : ''}`}
+              className={`progress-dot ${i < currentQuestion ? 'done' : ''} ${i === currentQuestion ? 'active' : ''}`}
             />
           ))}
         </div>
 
         <div className="question-container">
-          <div className="question">{q.question}</div>
+          <div className="question">
+            <span className="question-number">Question {currentQuestion + 1} of {questions.length}</span>
+            {q.question}
+          </div>
           <div className="options">
             {q.options.map((option, index) => {
               const selected = selectedAnswer === index;
